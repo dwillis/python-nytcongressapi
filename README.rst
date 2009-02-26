@@ -59,7 +59,7 @@ The parameter is:
     * id (the official ID from http://bioguide.congress.gov)
 
 for_congress_and_chamber
----------------
+------------------------
 
 members.for_congress_and_chamber works much the same way, but returns a list. Congress and chamber
 are required parameters, with state and district being optional.
