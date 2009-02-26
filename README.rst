@@ -1,5 +1,5 @@
 python-nytcongressapi
-==================
+=====================
 
 A Python wrapper for The New York Times Congress API, which provides information about members, roles and votes for the United States Congress. (http://developer.nytimes.com/docs/congress_api). This wrapper borrows heavily in its design from the python-sunlightapi project by James Turk.
 (http://github.com/sunlightlabs/python-sunlightapi)
