@@ -1,4 +1,3 @@
-==================
 python-nytcongressapi
 ==================
 
@@ -47,20 +46,21 @@ And set your API key:
 member methods
 -------------------
 
-    * member.get                          - get a single legislator
-    * members.for_congress_and_chamber    - get zero or more legislators
+    * member.get                          - get a single member
+    * members.for_congress_and_chamber    - get zero or more member
     
 
 get
 ---------------
     
-member.get takes one of several parameters to lookup a single member of the House or Senate.
+member.get takes a single parameter to lookup a single member of the House or Senate.
 
-The available parameters are:
+The parameter is:
     * id (the official ID from http://bioguide.congress.gov)
-    * govtrack_id (from http://govtrack.us)
-    
-    
+
+for_congress_and_chamber
+---------------
+
 members.for_congress_and_chamber works much the same way, but returns a list. Congress and chamber
 are required parameters, with state and district being optional.
 
