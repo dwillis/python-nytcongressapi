@@ -58,13 +58,18 @@ member.get takes a single parameter to lookup a single member of the House or Se
 The parameter is:
     * id (the official ID from http://bioguide.congress.gov)
 
+    >>> member = nytcongress.members.get("G000555")
+    >>> print member.name
+    Kirsten Gillibrand
+
+
 for_congress_and_chamber
 ------------------------
 
 members.for_congress_and_chamber works much the same way, but returns a list. Congress and chamber
 are required parameters, with state and district being optional.
 
-    >>> for member in nytcongressapi.members.for_congress_and_chamber(111, 'house', 'PA'):
+    >>> for member in nytcongress.members.for_congress_and_chamber(111, 'house', 'PA'):
     ...     print member.name
     Jason Altmire
     Robert Brady

@@ -72,7 +72,7 @@ class nytcongress(object):
         @staticmethod
         def get(id):
             path = 'members/%s' % id
-            result = nytcongress._apicall(path)
+            result = nytcongress._apicall(path, None)
             return Member(result)
             
         @staticmethod
