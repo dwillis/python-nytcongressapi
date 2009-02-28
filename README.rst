@@ -46,33 +46,36 @@ And set your API key:
 member methods
 -------------------
 
-    * member.get                          - get a single member
-    * members.for_congress_and_chamber    - get zero or more member
+Member methods are done in a style vaguely reminiscent of Django's ORM: get retrieves a single object 
+while filter retrieves multiple objects.
+
+    * members.get                   - get a single member
+    * members.filter                - get zero or more member
     
 
 get
 ---------------
     
-member.get takes a single parameter to lookup a single member of the House or Senate.
+members.get takes a single parameter to lookup a single member of the House or Senate.
 
 The parameter is:
     * id (the official ID from http://bioguide.congress.gov)
 
-    >>> member = nytcongress.members.get("G000555")
+    >>> member = nytcongress.members.get(id="G000555")
     >>> print member.name
     Kirsten Gillibrand
 
 
-for_congress_and_chamber
+filter
 ------------------------
 
 members.for_congress_and_chamber works much the same way, but returns a list. Congress and chamber
 are required parameters, with state and district being optional.
 
-    >>> for member in nytcongress.members.for_congress_and_chamber(111, 'house', 'PA'):
+    >>> for member in nytcongress.members.filter(congress=111, chamber='house', state='PA'):
     ...     print member.name
     Jason Altmire
     Robert Brady
 
-A call to members.for_congress_and_chamber that has no state or district will return all members who have served
+A call to members.filter that has no state or district will return all members who have served
 in that congress and chamber. A call that includes district but not state will return an error.

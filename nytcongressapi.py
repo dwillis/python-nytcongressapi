@@ -26,12 +26,12 @@ class NYTCongressApiObject(object):
         self.__dict__ = d
  
 class Member(NYTCongressApiObject):
-    def __unicode__(self):
-        return u'%s (%s)' % (self.display_name, self.id)
+    def __repr__(self):
+        return u'%s' % self.name
 
 class MemberRole(NYTCongressApiObject):
-    def __unicode__(self):
-        return u'%s (%s)' % (self.display_name, self.id)
+    def __repr__(self):
+        return u'%s' % self.name
 
 class Committee(NYTCongressApiObject):
     def __unicode__(self):
@@ -76,7 +76,7 @@ class nytcongress(object):
             return Member(result)
             
         @staticmethod
-        def for_congress_and_chamber(congress, chamber, state=None, district=None):
+        def filter(congress, chamber, state=None, district=None):
             path = '%s/%s/members' % (congress, chamber)
             if state and district:
                 params = {'state': state, 'district': district }
