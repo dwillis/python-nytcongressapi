@@ -33,6 +33,10 @@ class MemberRole(NYTCongressApiObject):
     def __repr__(self):
         return u'%s' % self.name
 
+class Vote(NYTCongressApiObject):
+    def __repr__(self):
+        return u'Roll Call Vote %s in the %s Congress' % (self.roll_call, self.congress)
+
 class Committee(NYTCongressApiObject):
     def __unicode__(self):
         return u'%s' % self.name
@@ -62,7 +66,7 @@ class nytcongress(object):
             raise NYTCongressApiError('You did not supply an API key')
         try:
             response = urllib2.urlopen(url).read()
-            return json.loads(response)['results'][0]
+            return json.loads(response)['results']
         except urllib2.HTTPError, e:
             raise NYTCongressApiError(e.read())
         except (ValueError, KeyError), e:
@@ -72,7 +76,7 @@ class nytcongress(object):
         @staticmethod
         def get(id):
             path = 'members/%s' % id
-            result = nytcongress._apicall(path, None)
+            result = nytcongress._apicall(path, None)[0]
             return Member(result)
             
         @staticmethod
@@ -84,6 +88,12 @@ class nytcongress(object):
                 params = {'state': state}
             elif district:
                 raise NYTCongressApiError('You must supply a state and district')
-            results = nytcongress._apicall(path, params)
+            results = nytcongress._apicall(path, params)[0]
             return [MemberRole(m) for m in results['members']]
-            
+    
+    class votes(object):
+        @staticmethod
+        def get(congress, chamber, session, roll_call):
+            path = '%s/%s/sessions/%s/votes/%s' % (congress, chamber, session, roll_call)
+            result = nytcongress._apicall(path, None)['votes']['vote']
+            return Vote(result)

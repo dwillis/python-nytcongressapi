@@ -49,8 +49,8 @@ member methods
 Member methods are done in a style vaguely reminiscent of Django's ORM: get retrieves a single object 
 while filter retrieves multiple objects.
 
-    * members.get                   - get a single member
-    * members.filter                - get zero or more member
+    * members.get                   - returns a single member
+    * members.filter                - returns zero or more members
     
 
 get
@@ -79,3 +79,19 @@ are required parameters, with state and district being optional.
 
 A call to members.filter that has no state or district will return all members who have served
 in that congress and chamber. A call that includes district but not state will return an error.
+
+-------------------
+votes methods
+-------------------
+
+The only votes method currently supported is get, which returns information about a single vote in either
+the House or the Senate. Forthcoming methods will include nomination votes and the latest votes in a chamber.
+
+get
+---------------
+
+votes.get takes four parameters: the congress, chamber, session and roll call numbers.
+
+    >>> vote = nytcongress.votes.get(congress=111, chamber='house', session=1, roll_call=74)
+    >>> print vote.question
+    On Motion to Suspend the Rules and Pass
