@@ -69,7 +69,7 @@ The parameter is:
 filter
 ------------------------
 
-members.for_congress_and_chamber works much the same way, but returns a list. Congress and chamber
+members.filter works much the same way, but returns a list. Congress and chamber
 are required parameters, with state and district being optional.
 
     >>> for member in nytcongress.members.filter(congress=111, chamber='house', state='PA'):
