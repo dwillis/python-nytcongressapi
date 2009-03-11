@@ -97,3 +97,9 @@ class nytcongress(object):
             path = '%s/%s/sessions/%s/votes/%s' % (congress, chamber, session, roll_call)
             result = nytcongress._apicall(path, None)['votes']['vote']
             return Vote(result)
+            
+        @staticmethod
+        def nominations(congress):
+            path = '%s/nominations' % congress
+            results = nytcongress._apicall(path, None)[0]['votes']
+            return [Vote(r) for r in results]
