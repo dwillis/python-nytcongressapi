@@ -84,8 +84,9 @@ in that congress and chamber. A call that includes district but not state will r
 votes methods
 -------------------
 
-The only votes method currently supported is get, which returns information about a single vote in either
-the House or the Senate. Forthcoming methods will include nomination votes and the latest votes in a chamber.
+The only votes methods currently supported are get, which returns information about a single vote in either
+the House or the Senate, and nominations, which retrieves Senate nomination votes for a given congress. 
+Forthcoming methods will include the latest votes in a chamber.
 
 get
 ---------------
@@ -95,3 +96,12 @@ votes.get takes four parameters: the congress, chamber, session and roll call nu
     >>> vote = nytcongress.votes.get(congress=111, chamber='house', session=1, roll_call=74)
     >>> print vote.question
     On Motion to Suspend the Rules and Pass
+
+nominations
+---------------
+votes.nominations takes a single parameter, congress.
+
+    >>> for vote in nytcongress.votes.nomination(congress=111):
+    ...     print vote.description
+    Confirmation Hilda L. Solis of California, to be Secretary of Labor
+    
