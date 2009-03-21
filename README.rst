@@ -101,7 +101,7 @@ nominations
 ---------------
 votes.nominations takes a single parameter, congress.
 
-    >>> for vote in nytcongress.votes.nomination(congress=111):
+    >>> for vote in nytcongress.votes.nominations(congress=111):
     ...     print vote.description
     Confirmation Hilda L. Solis of California, to be Secretary of Labor
 
