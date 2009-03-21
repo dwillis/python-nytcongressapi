@@ -104,4 +104,42 @@ votes.nominations takes a single parameter, congress.
     >>> for vote in nytcongress.votes.nomination(congress=111):
     ...     print vote.description
     Confirmation Hilda L. Solis of California, to be Secretary of Labor
+
+-------------------
+committee methods
+-------------------
+
+Committee methods are done in a style vaguely reminiscent of Django's ORM: get retrieves a single object 
+while filter retrieves multiple objects.
+
+    * committees.get                   - returns a single committees
+    * committees.filter                - returns zero or more committees
+
+
+get
+---------------
     
+committees.get takes three parameters to lookup a single committee of the House or Senate.
+
+The parameters are, in order:
+    * the congress (an integer)
+    * the chamber (a string)
+    * the four-letter committee code (a string)
+
+    >>> committee = nytcongress.committees.get(111,'senate', 'SSAF')
+    >>> print committee.committee
+    Committee on Agriculture
+
+
+filter
+------------------------
+
+committees.filter works much the same way, but returns a list. Congress and chamber
+are required parameters.
+
+    >>> for committee in nytcongress.committees.filter(congress=111, chamber='house'):
+    ...     print committee.name
+    Committee on Agriculture
+    Committee on Appropriations
+    ...
+    Committee on Ways and Means

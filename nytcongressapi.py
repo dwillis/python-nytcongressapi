@@ -38,16 +38,11 @@ class Vote(NYTCongressApiObject):
         return u'Roll Call Vote %s in the %s Congress' % (self.roll_call, self.congress)
 
 class Committee(NYTCongressApiObject):
-    def __unicode__(self):
-        return u'%s' % self.name
-
-class Committees(NYTCongressApiObject):
-    def __init__(self, d):
-        self.__dict__ = d
-
-    def __unicode__(self):
-        return u'%s - %s for %s' % (self.congress_id, self.chamber)
-
+    def __repr__(self):
+        try:
+            return u'%s' % self.name
+        except:
+            return u'%s' % self.committee
 
 # namespaces #
  
@@ -103,3 +98,17 @@ class nytcongress(object):
             path = '%s/nominations' % congress
             results = nytcongress._apicall(path, None)[0]['votes']
             return [Vote(r) for r in results]
+    
+    class committees(object):
+        @staticmethod
+        def get(congress, chamber, comm):
+            path = "%s/%s/committees/%s" % (congress, chamber, comm)
+            result = nytcongress._apicall(path, None)[0]
+            return Committee(result)
+        
+        @staticmethod
+        def filter(congress, chamber):
+            path = "%s/%s/committees" % (congress, chamber)
+            results = nytcongress._apicall(path, None)[0]
+            ch = results['chamber']
+            return [Committee(c) for c in results['committees']]
