@@ -27,17 +27,21 @@ class NYTCongressApiObject(object):
  
 class Member(NYTCongressApiObject):
     def __repr__(self):
-        return u'%s' % self.name
+        return u'%s (%s-%s)' % (unicode(self.name), self.roles[0]['party'], self.roles[0]['state'])
 
 class MemberRole(NYTCongressApiObject):
     def __repr__(self):
-        return u'%s' % self.name
+        return u'%s' % unicode(self.name)
 
 class Vote(NYTCongressApiObject):
     def __repr__(self):
         return u'Roll Call Vote %s in the %s Congress' % (self.roll_call, self.congress)
 
 class Committee(NYTCongressApiObject):
+    def __init__(self, d):
+        self.__dict__ = d
+        self.members = [MemberRole(m) for m in getattr(self, 'members', [])]
+        
     def __repr__(self):
         try:
             return u'%s' % self.name
@@ -73,7 +77,7 @@ class nytcongress(object):
             path = 'members/%s' % id
             result = nytcongress._apicall(path, None)[0]
             return Member(result)
-            
+        
         @staticmethod
         def filter(congress, chamber, state=None, district=None):
             path = '%s/%s/members' % (congress, chamber)
@@ -83,8 +87,16 @@ class nytcongress(object):
                 params = {'state': state}
             elif district:
                 raise NYTCongressApiError('You must supply a state and district')
+            else:
+                params=None
             results = nytcongress._apicall(path, params)[0]
             return [MemberRole(m) for m in results['members']]
+            
+        @staticmethod
+        def floor(id):
+            path = 'members/%s/floor_appearances' % id
+            results = nytcongress._apicall(path, None)[0]['appearances']
+            
     
     class votes(object):
         @staticmethod
@@ -112,3 +124,4 @@ class nytcongress(object):
             results = nytcongress._apicall(path, None)[0]
             ch = results['chamber']
             return [Committee(c) for c in results['committees']]
+    

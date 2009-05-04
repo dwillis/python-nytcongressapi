@@ -51,6 +51,7 @@ while filter retrieves multiple objects.
 
     * members.get                   - returns a single member
     * members.filter                - returns zero or more members
+    * members.vote_type             - returns a list of members
     
 
 get
@@ -62,8 +63,8 @@ The parameter is:
     * id (the official ID from http://bioguide.congress.gov)
 
     >>> member = nytcongress.members.get(id="G000555")
-    >>> print member.name
-    Kirsten Gillibrand
+    >>> member
+    Kirsten Gillibrand (D-NY)
 
 
 filter
@@ -79,6 +80,17 @@ are required parameters, with state and district being optional.
 
 A call to members.filter that has no state or district will return all members who have served
 in that congress and chamber. A call that includes district but not state will return an error.
+
+floor
+------------------------
+members.floor requires a single parameter - a member's bioguide id - and returns a list of floor appearances
+as tracked by C-SPAN.
+
+    >>> appearances = nytcongress.members.floor(id="G000555")
+    >>> for appearance in appearances:
+    ...     print appearance.date
+    2009-04-30
+    2009-04-28
 
 -------------------
 votes methods
@@ -129,7 +141,16 @@ The parameters are, in order:
     >>> committee = nytcongress.committees.get(111,'senate', 'SSAF')
     >>> print committee.committee
     Committee on Agriculture
+    
+    
+a committee response also provides lists of current and (if applicable) former members for that
+committee during that congress:
 
+    >>> committee = nytcongress.committees.get(111,'senate', 'SSAF')
+    >>> for member in committee.current_members:
+    ...     print member.name
+    Tom Harkin
+    Patrick Leahy
 
 filter
 ------------------------
@@ -143,3 +164,4 @@ are required parameters.
     Committee on Appropriations
     ...
     Committee on Ways and Means
+    
