@@ -10,14 +10,14 @@ Pre-requisites: simplejson (except if using Python > 2.6)
 __author__ = "Derek Willis (dwillis@gmail.com)"
 __version__ = "0.1.0"
 __copyright__ = "Copyright (c) 2009 Derek Willis"
-__license__ = "BSD"
+__license__ = "MIT"
  
 import urllib, urllib2
 try:
     import json
 except ImportError:
     import simplejson as json
- 
+
 class NYTCongressApiError(Exception):
     """ Exception for New York Times Congress API errors """
 
@@ -36,6 +36,10 @@ class MemberRole(NYTCongressApiObject):
 class Vote(NYTCongressApiObject):
     def __repr__(self):
         return u'Roll Call Vote %s in the %s Congress' % (self.roll_call, self.congress)
+
+class Bill(NYTCongressApiObject):
+    def __repr__(self):
+        return u'%s' % unicode(self.number)
 
 class Committee(NYTCongressApiObject):
     def __init__(self, d):
@@ -96,7 +100,13 @@ class nytcongress(object):
         def floor(id):
             path = 'members/%s/floor_appearances' % id
             results = nytcongress._apicall(path, None)[0]['appearances']
-            
+        
+        @staticmethod
+        def bills(id, bill_type):
+            path = 'members/%s/bills/%s' % (id, bill_type)
+            results = nytcongress._apicall(path, None)[0]['bills']
+            return [Bill(b) for b in results]
+        
     
     class votes(object):
         @staticmethod
@@ -125,3 +135,9 @@ class nytcongress(object):
             ch = results['chamber']
             return [Committee(c) for c in results['committees']]
     
+    class bills(object):
+        @staticmethod
+        def get(congress, bill):
+            path = "%s/bills/%s" % (congress, bill)
+            result = nytcongress._apicall(path, None)[0]
+            return Bill(result)
