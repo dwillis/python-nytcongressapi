@@ -92,6 +92,17 @@ as tracked by C-SPAN.
     2009-04-30
     2009-04-28
 
+bills
+------------------------
+members.bills requires two parameters - a member's bioguide id and either 'introduced' or 'updated' depending on which type of result is desired - and returns a list of bills sponsored by that member. Passing 'introduced' returns the 20 most recently introduced bills and 'updated' returns the 20 most recently updated bills.
+
+    >>> bills = bills = nytcongress.members.bills(id="G000555", bill_type="introduced")
+    >>> for bill in bills:
+    ...     print bill.bill_number
+    S.1438
+    S.1394
+
+
 -------------------
 votes methods
 -------------------
@@ -116,6 +127,23 @@ votes.nominations takes a single parameter, congress.
     >>> for vote in nytcongress.votes.nominations(congress=111):
     ...     print vote.description
     Confirmation Hilda L. Solis of California, to be Secretary of Labor
+
+-------------------
+bills methods
+-------------------
+
+The only bill method currently supported is get, which returns information about a single bill in a given chamber
+and congress.
+
+get
+---------------
+
+bills.get takes two parameters: the congress and url_number (a slugified version of the bill number).
+
+    >>> bill = nytcongress.bills.get(congress=111, bill_slug='hr2581')
+    >>> print bill.title
+    To amend the Public Health Service Act to provide for a health survey regarding Native Hawaiians and other Pacific Islanders.
+
 
 -------------------
 committee methods

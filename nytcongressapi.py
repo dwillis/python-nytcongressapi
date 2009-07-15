@@ -137,7 +137,7 @@ class nytcongress(object):
     
     class bills(object):
         @staticmethod
-        def get(congress, bill):
-            path = "%s/bills/%s" % (congress, bill)
+        def get(congress, bill_slug):
+            path = "%s/bills/%s" % (congress, bill_slug)
             result = nytcongress._apicall(path, None)[0]
             return Bill(result)
