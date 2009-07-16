@@ -141,3 +141,9 @@ class nytcongress(object):
             path = "%s/bills/%s" % (congress, bill_slug)
             result = nytcongress._apicall(path, None)[0]
             return Bill(result)
+        
+        @staticmethod
+        def filter(congress, chamber, bill_type):
+            path = "%s/%s/bills/%s" % (congress, chamber, bill_type)
+            results = nytcongress._apicall(path, None)[0]
+            return [Bill(b) for b in results['bills']]

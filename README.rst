@@ -132,8 +132,8 @@ votes.nominations takes a single parameter, congress.
 bills methods
 -------------------
 
-The only bill method currently supported is get, which returns information about a single bill in a given chamber
-and congress.
+The only bill methods currently supported are get, which returns information about a single bill in a given chamber
+and congress, and filter, which returns information about the latest 20 bills in a given chamber and congress, with sort order determined by a third parameter, bill_type.
 
 get
 ---------------
@@ -143,6 +143,15 @@ bills.get takes two parameters: the congress and url_number (a slugified version
     >>> bill = nytcongress.bills.get(congress=111, bill_slug='hr2581')
     >>> print bill.title
     To amend the Public Health Service Act to provide for a health survey regarding Native Hawaiians and other Pacific Islanders.
+
+filter
+---------------
+bills.filter takes three parameters: the congress, chamber and bill_type, which is either 'introduced' or 'updated'.
+
+    >>> bills = nytcongress.bills.filter(111,'senate','introduced')
+    >>> for bill in bills:
+    ...     print bill.title
+    A bill to amend the Public Health Service Act to improve the health of children and reduce the occurrence of sudden unexpected infant death and to enhance public health activities related to stillbirth.
 
 
 -------------------
