@@ -27,11 +27,15 @@ class NYTCongressApiObject(object):
  
 class Member(NYTCongressApiObject):
     def __repr__(self):
-        return u'%s (%s-%s)' % (unicode(self.name), self.roles[0]['party'], self.roles[0]['state'])
+        return u'%s (%s-%s)' % (unicode(self.name).encode('utf-8'), self.roles[0]['party'], self.roles[0]['state'])
+
+class MemberTotal(NYTCongressApiObject):
+    def __repr__(self):
+        return '%s' % unicode(self.name).encode('utf-8')
 
 class MemberRole(NYTCongressApiObject):
     def __repr__(self):
-        return u'%s' % unicode(self.name)
+        return u'%s' % unicode(self.name).encode('utf-8')
 
 class Vote(NYTCongressApiObject):
     def __repr__(self):
@@ -107,6 +111,11 @@ class nytcongress(object):
             results = nytcongress._apicall(path, None)[0]['bills']
             return [Bill(b) for b in results]
         
+        @staticmethod
+        def totals(total, congress, chamber):
+            path = '%s/%s/%s_votes' % (congress, chamber, total)
+            results = nytcongress._apicall(path, None)[0]['members']
+            return [MemberTotal(m) for m in results]
     
     class votes(object):
         @staticmethod
@@ -147,3 +156,5 @@ class nytcongress(object):
             path = "%s/%s/bills/%s" % (congress, chamber, bill_type)
             results = nytcongress._apicall(path, None)[0]
             return [Bill(b) for b in results['bills']]
+        
+        

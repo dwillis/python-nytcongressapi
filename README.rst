@@ -91,6 +91,20 @@ as tracked by C-SPAN.
     ...     print appearance.date
     2009-04-30
     2009-04-28
+    
+totals
+------------------------
+members.totals takes three parameters - the type of total ("missed" and "party", for missed votes and voting with party),
+the congress and the chamber, and returns a list of members with their percentages of missed votes or votes with a
+majority of their party.
+
+    >>> missers = nytcongress.members.totals('missed',111,'house')
+    >>> for misser in missers:
+    ...     print misser.name
+    Hilda Solis
+    John Sullivan
+    Patrick Kennedy
+    
 
 bills
 ------------------------
