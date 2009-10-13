@@ -56,6 +56,20 @@ class Committee(NYTCongressApiObject):
         except:
             return u'%s' % self.committee
 
+class Comparison(NYTCongressApiObject):
+    """
+    A comparison of how often two members of Congress voted
+    in a given chamber and congress.
+    """
+    def __init__(self, d):
+        self.__dict__ = d
+        self.first_member = nytcongress.members.get(self.first_member_id)
+        self.second_member = nytcongress.members.get(self.second_member_id)
+
+    def __repr__(self):
+        return u'%s and %s agree %s percent of the time' % (self.first_member, self.second_member, self.agree_percent)
+
+
 # namespaces #
  
 class nytcongress(object):
@@ -116,6 +130,12 @@ class nytcongress(object):
             path = '%s/%s/%s_votes' % (congress, chamber, total)
             results = nytcongress._apicall(path, None)[0]['members']
             return [MemberTotal(m) for m in results]
+
+        @staticmethod
+        def compare(first, second, congress, chamber):
+            path = 'members/%s/compare/%s/%s/%s' % (first, second, congress, chamber)
+            results = nytcongress._apicall(path, None)[0]
+            return Comparison(results)
     
     class votes(object):
         @staticmethod
