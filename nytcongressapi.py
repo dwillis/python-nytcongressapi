@@ -61,13 +61,36 @@ class Comparison(NYTCongressApiObject):
     A comparison of how often two members of Congress voted
     in a given chamber and congress.
     """
+    # storing these as attributes to save API requests
+    _first_member = None
+    _second_member = None
+
     def __init__(self, d):
         self.__dict__ = d
-        self.first_member = nytcongress.members.get(self.first_member_id)
-        self.second_member = nytcongress.members.get(self.second_member_id)
+
+    @property
+    def first_member(self):
+        if self._first_member is not None:
+            return self._first_member
+        else:
+            self._first_member = nytcongress.members.get(self.first_member_id)
+            return self._first_member
+
+    @property
+    def second_member(self):
+        if self._second_member is not None:
+            return self._second_member
+        else:
+            self._second_member = nytcongress.members.get(self.second_member_id)
+            return self._second_member
+
+    
 
     def __repr__(self):
-        return u'%s and %s agree %s percent of the time' % (self.first_member, self.second_member, self.agree_percent)
+        if self._first_member and self._second_member:
+            return u'%s and %s agree %s percent of the time' % (self.first_member, self.second_member, self.agree_percent)
+        else:
+            return u'%s%% agreement' % self.agree_percent
 
 
 # namespaces #
