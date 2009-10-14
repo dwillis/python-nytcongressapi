@@ -29,6 +29,14 @@ class Member(NYTCongressApiObject):
     def __repr__(self):
         return u'%s (%s-%s)' % (unicode(self.name).encode('utf-8'), self.roles[0]['party'], self.roles[0]['state'])
 
+    @property
+    def party(self):
+        return self.roles[0]['party']
+
+    @property
+    def state(self):
+        return self.roles[0]['state']
+
 class MemberTotal(NYTCongressApiObject):
     def __repr__(self):
         return '%s' % unicode(self.name).encode('utf-8')
