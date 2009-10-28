@@ -6,6 +6,8 @@ A Python wrapper for The New York Times Congress API, which provides information
 
 python-nytcongressapi is a project of Derek Willis <dwillis@gmail.com> (c) 2009.
 
+Contributors: Chris Amico (http://github.com/eyeseast)
+
 All code is under the MIT License, see LICENSE for details.
 
 
