@@ -66,7 +66,7 @@ The parameter is:
 
     >>> member = nytcongress.members.get(id="G000555")
     >>> member
-    Kirsten Gillibrand (D-NY)
+    <Member: Kirsten Gillibrand (D-NY)>
 
 
 filter

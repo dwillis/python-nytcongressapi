@@ -27,7 +27,7 @@ class NYTCongressApiObject(object):
  
 class Member(NYTCongressApiObject):
     def __repr__(self):
-        return u'%s (%s-%s)' % (unicode(self.name).encode('utf-8'), self.roles[0]['party'], self.roles[0]['state'])
+        return '<%s: %s (%s-%s)>' % (self.__class__.__name__, unicode(self.name).encode('utf-8'), self.roles[0]['party'], self.roles[0]['state'])
 
     @property
     def party(self):
@@ -39,19 +39,19 @@ class Member(NYTCongressApiObject):
 
 class MemberTotal(NYTCongressApiObject):
     def __repr__(self):
-        return '%s' % unicode(self.name).encode('utf-8')
+        return '<%s: %s>' % (self.__class__.__name__, unicode(self.name).encode('utf-8'))
 
 class MemberRole(NYTCongressApiObject):
     def __repr__(self):
-        return u'%s' % unicode(self.name).encode('utf-8')
+        return '<%s: %s>' % (self.__class__.__name__, unicode(self.name).encode('utf-8'))
 
 class Vote(NYTCongressApiObject):
     def __repr__(self):
-        return u'Roll Call Vote %s in the %s Congress' % (self.roll_call, self.congress)
+        return '<%s: Roll Call Vote %s in the %s Congress>' % (self.__class__.__name__, self.roll_call, self.congress)
 
 class Bill(NYTCongressApiObject):
     def __repr__(self):
-        return u'%s' % unicode(self.number)
+        return '<%s: %s>' % (self.__class__.__name__, unicode(self.number))
 
 class Committee(NYTCongressApiObject):
     def __init__(self, d):
@@ -60,9 +60,9 @@ class Committee(NYTCongressApiObject):
         
     def __repr__(self):
         try:
-            return u'%s' % self.name
+            return '<%s: %s>' % (self.__class__.__name__, self.name)
         except:
-            return u'%s' % self.committee
+            return '<%s: %s>' % (self.__class__.__name__, self.committee)
 
 class Comparison(NYTCongressApiObject):
     """
@@ -96,9 +96,9 @@ class Comparison(NYTCongressApiObject):
 
     def __repr__(self):
         if self._first_member and self._second_member:
-            return u'%s and %s agree %s percent of the time' % (self.first_member, self.second_member, self.agree_percent)
+            return '<%s: %s and %s agree %s percent of the time>' % (self.__class__.__name__, self.first_member, self.second_member, self.agree_percent)
         else:
-            return u'%s%% agreement' % self.agree_percent
+            return '<%s: %s%% agreement' % (self.__class__.__name__, self.agree_percent)
 
 
 # namespaces #
