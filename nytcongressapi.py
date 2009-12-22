@@ -24,10 +24,17 @@ class NYTCongressApiError(Exception):
 class NYTCongressApiObject(object):
     def __init__(self, d):
         self.__dict__ = d
- 
-class Member(NYTCongressApiObject):
+    
     def __repr__(self):
-        return '<%s: %s (%s-%s)>' % (self.__class__.__name__, unicode(self.name).encode('utf-8'), self.roles[0]['party'], self.roles[0]['state'])
+        return '<%s: %s>' % (self.__class__.__name__, self.__str__())
+    
+    def __str__(self):
+        return ''
+
+
+class Member(NYTCongressApiObject):   
+    def __str__(self):
+        return "%s (%s-%s)" % (unicode(self.name).encode('utf-8'), self.roles[0]['party'], self.roles[0]['state'])
 
     @property
     def party(self):
@@ -38,31 +45,31 @@ class Member(NYTCongressApiObject):
         return self.roles[0]['state']
 
 class MemberTotal(NYTCongressApiObject):
-    def __repr__(self):
-        return '<%s: %s>' % (self.__class__.__name__, unicode(self.name).encode('utf-8'))
+    def __str__(self):
+        return '%s' % unicode(self.name).encode('utf-8')
 
 class MemberRole(NYTCongressApiObject):
-    def __repr__(self):
-        return '<%s: %s>' % (self.__class__.__name__, unicode(self.name).encode('utf-8'))
+    def __str__(self):
+        return '%s' % unicode(self.name).encode('utf-8')
 
 class Vote(NYTCongressApiObject):
-    def __repr__(self):
-        return '<%s: Roll Call Vote %s in the %s Congress>' % (self.__class__.__name__, self.roll_call, self.congress)
+    def __str__(self):
+        return 'Roll Call Vote %s in the %s Congress' % (self.roll_call, self.congress)
 
 class Bill(NYTCongressApiObject):
-    def __repr__(self):
-        return '<%s: %s>' % (self.__class__.__name__, unicode(self.number))
+    def __str__(self):
+        return '%s' % unicode(self.number)
 
 class Committee(NYTCongressApiObject):
     def __init__(self, d):
         self.__dict__ = d
         self.members = [MemberRole(m) for m in getattr(self, 'members', [])]
         
-    def __repr__(self):
+    def __str__(self):
         try:
-            return '<%s: %s>' % (self.__class__.__name__, self.name)
+            return '%s' % self.name
         except:
-            return '<%s: %s>' % (self.__class__.__name__, self.committee)
+            return '%s' % self.committee
 
 class Comparison(NYTCongressApiObject):
     """
@@ -83,7 +90,7 @@ class Comparison(NYTCongressApiObject):
         else:
             self._first_member = nytcongress.members.get(self.first_member_id)
             return self._first_member
-
+    
     @property
     def second_member(self):
         if self._second_member is not None:
@@ -92,13 +99,11 @@ class Comparison(NYTCongressApiObject):
             self._second_member = nytcongress.members.get(self.second_member_id)
             return self._second_member
 
-    
-
-    def __repr__(self):
+    def __str__(self):
         if self._first_member and self._second_member:
-            return '<%s: %s and %s agree %s percent of the time>' % (self.__class__.__name__, self.first_member, self.second_member, self.agree_percent)
+            return '%s and %s agree %s percent of the time' % (self.first_member, self.second_member, self.agree_percent)
         else:
-            return '<%s: %s%% agreement' % (self.__class__.__name__, self.agree_percent)
+            return '%s%% agreement' % (self.__class__.__name__, self.agree_percent)
 
 
 # namespaces #
