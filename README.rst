@@ -42,7 +42,7 @@ Import ``nytcongress`` from ``nytcongressapi``:
     
 And set your API key:
     
-    >>> nytcongress.api_key = 'nytcongress-api-key'
+    >>> nytcongress.api_key = YOUR_API_KEY
 
 -------------------
 member methods

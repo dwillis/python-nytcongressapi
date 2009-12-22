@@ -154,6 +154,7 @@ class nytcongress(object):
         def floor(id):
             path = 'members/%s/floor_appearances' % id
             results = nytcongress._apicall(path, None)[0]['appearances']
+            return results
         
         @staticmethod
         def bills(id, bill_type):
