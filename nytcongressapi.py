@@ -103,7 +103,27 @@ class Comparison(NYTCongressApiObject):
         if self._first_member and self._second_member:
             return '%s and %s agree %s percent of the time' % (self.first_member, self.second_member, self.agree_percent)
         else:
-            return '%s%% agreement' % (self.__class__.__name__, self.agree_percent)
+            return '%s%% agreement' % self.agree_percent
+
+
+class FloorAppearance(NYTCongressApiObject):
+    _member = None
+    
+    def __init__(self, member_id, d):
+        self.__dict__ = d
+        self.title = d.get('title', '').strip() # this tends to have trailing whitespace
+        self.member_id = member_id
+    
+    @property
+    def member(self):
+        if self._member is not None:
+            return self._member
+        else:
+            self._member = nytcongress.members.get(self.member_id)
+            return self._member
+    
+    def __str__(self):
+        return self.title
 
 
 # namespaces #
@@ -154,7 +174,7 @@ class nytcongress(object):
         def floor(id):
             path = 'members/%s/floor_appearances' % id
             results = nytcongress._apicall(path, None)[0]['appearances']
-            return results
+            return [FloorAppearance(id, appearance) for appearance in results]
         
         @staticmethod
         def bills(id, bill_type):
