@@ -4,7 +4,7 @@ python-nytcongressapi
 A Python wrapper for The New York Times Congress API, which provides information about members, roles and votes for the United States Congress. (http://developer.nytimes.com/docs/congress_api). This wrapper borrows heavily in its design from the python-sunlightapi project by James Turk.
 (http://github.com/sunlightlabs/python-sunlightapi)
 
-python-nytcongressapi is a project of Derek Willis <dwillis@gmail.com> (c) 2009.
+python-nytcongressapi is a project of Derek Willis <dwillis@gmail.com> (c) 2010.
 
 Contributors: Chris Amico (http://github.com/eyeseast)
 
@@ -31,7 +31,8 @@ Usage
 =====
 
 To initialize the api, all that is required is for it to be imported and for an
-API key to be defined.
+API key to be defined. At this time the library supports version 3 of the New York
+Times Congress API.
 
 (If you do not have an API key visit http://developer.nytimes.com/ to
 register for one.)
@@ -148,8 +149,8 @@ votes.nominations takes a single parameter, congress.
 bills methods
 -------------------
 
-The only bill methods currently supported are get, which returns information about a single bill in a given chamber
-and congress, and filter, which returns information about the latest 20 bills in a given chamber and congress, with sort order determined by a third parameter, bill_type.
+The bill methods currently supported are get, which returns information about a single bill in a given chamber
+and congress, filter, which returns information about the latest 20 bills in a given chamber and congress, with sort order determined by a third parameter (bill_type), and sponsor_compare, which takes two member ids, a congress and chamber and returns a list of bills that both members have co-sponsored.
 
 get
 ---------------
@@ -169,6 +170,13 @@ bills.filter takes three parameters: the congress, chamber and bill_type, which 
     ...     print bill.title
     A bill to amend the Public Health Service Act to improve the health of children and reduce the occurrence of sudden unexpected infant death and to enhance public health activities related to stillbirth.
 
+member_compare
+---------------
+member_compare takes four parameters: two member IDs (as represented by their Bioguide IDs), the congress and lower case chamber name.
+
+	>>> bills = nytcongress.bills.sponsor_compare('G000555','A000360', 111,'senate')
+	>>> len(bills)
+	>>> 25
 
 -------------------
 committee methods
