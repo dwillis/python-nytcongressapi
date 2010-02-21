@@ -8,11 +8,12 @@ Pre-requisites: simplejson (except if using Python > 2.6)
 """
  
 __author__ = "Derek Willis (dwillis@gmail.com)"
-__version__ = "0.2.0"
-__copyright__ = "Copyright (c) 2009 Derek Willis"
+__version__ = "0.3.0"
+__copyright__ = "Copyright (c) 2010 Derek Willis"
 __license__ = "MIT"
  
 import urllib, urllib2
+import datetime
 try:
     import json
 except ImportError:
@@ -27,7 +28,7 @@ class NYTCongressApiObject(object):
  
 class Member(NYTCongressApiObject):
     def __repr__(self):
-        return '<%s: %s (%s-%s)>' % (self.__class__.__name__, unicode(self.name).encode('utf-8'), self.roles[0]['party'], self.roles[0]['state'])
+        return '<%s: %s (%s-%s)>' % (self.__class__.__name__, unicode(self.last_name).encode('utf-8'), self.roles[0]['party'], self.roles[0]['state'])
 
     @property
     def party(self):
@@ -36,22 +37,67 @@ class Member(NYTCongressApiObject):
     @property
     def state(self):
         return self.roles[0]['state']
+    
+    @property
+    def full_name(self):
+        if self.middle_name:
+            return "%s %s %s" % (self.first_name, self.middle_name, self.last_name)
+        else:
+            return "%s %s" % (self.first_name, self.last_name)
 
 class MemberTotal(NYTCongressApiObject):
     def __repr__(self):
-        return '<%s: %s>' % (self.__class__.__name__, unicode(self.name).encode('utf-8'))
+        return '<%s: %s>' % (self.__class__.__name__, unicode(self.last_name).encode('utf-8'))
 
 class MemberRole(NYTCongressApiObject):
     def __repr__(self):
-        return '<%s: %s>' % (self.__class__.__name__, unicode(self.name).encode('utf-8'))
+        return '<%s: %s>' % (self.__class__.__name__, unicode(self.last_name).encode('utf-8'))
+
+        @property
+        def full_name(self):
+            if self.middle_name:
+                return "%s %s %s" % (self.first_name, self.middle_name, self.last_name)
+            else:
+                return "%s %s" % (self.first_name, self.last_name)
 
 class Vote(NYTCongressApiObject):
     def __repr__(self):
         return '<%s: Roll Call Vote %s in the %s Congress>' % (self.__class__.__name__, self.roll_call, self.congress)
 
+class FloorAppearance(NYTCongressApiObject):
+    _member = None
+
+    def __init__(self, member_id, d):
+        self.__dict__ = d
+        self.title = d.get('title', '').strip() # this tends to have trailing whitespace
+        self.member_id = member_id
+
+    @property
+    def member(self):
+        if self._member is not None:
+            return self._member
+        else:
+            self._member = nytcongress.members.get(self.member_id)
+            return self._member
+
+    def __str__(self):
+        return self.title
+
+    def real_date(self):
+        year, month, day = [int(d) for d in self.date.split('-')]
+        return datetime.date(year, month, day)
+
+class Nominee(NYTCongressApiObject):
+    def __repr__(self):
+        return '<%s: %s>' % ('Nominee', self.nomination_number)
+
 class Bill(NYTCongressApiObject):
     def __repr__(self):
         return '<%s: %s>' % (self.__class__.__name__, unicode(self.number))
+        
+    def nyt_url(self):
+        slug = self.number.lower().replace('.','')
+        return "http://politics.nytimes.com/congress/bills/111/%s" % slug
 
 class Committee(NYTCongressApiObject):
     def __init__(self, d):
@@ -96,10 +142,9 @@ class Comparison(NYTCongressApiObject):
 
     def __repr__(self):
         if self._first_member and self._second_member:
-            return '<%s: %s and %s agree %s percent of the time>' % (self.__class__.__name__, self.first_member, self.second_member, self.agree_percent)
+            return '<%s: %s and %s agree %s percent of the time>' % (self.first_member, self.second_member, self.agree_percent)
         else:
-            return '<%s: %s%% agreement' % (self.__class__.__name__, self.agree_percent)
-
+            return '<%s: %s%% agreement' % self.agree_percent
 
 # namespaces #
  
@@ -111,11 +156,11 @@ class nytcongress(object):
     def _apicall(path, params):
         # fix to allow for keyword args
         if params:
-            url = "http://api.nytimes.com/svc/politics/v2/us/legislative/congress/%s.json?api-key=%s&%s" % (path, nytcongress.api_key, urllib.urlencode(params))
+            url = "http://api.nytimes.com/svc/politics/v3/us/legislative/congress/%s.json?api-key=%s&%s" % (path, nytcongress.api_key, urllib.urlencode(params))
         else:
-            url = "http://api.nytimes.com/svc/politics/v2/us/legislative/congress/%s.json?api-key=%s" % (path, nytcongress.api_key)
+            url = "http://api.nytimes.com/svc/politics/v3/us/legislative/congress/%s.json?api-key=%s" % (path, nytcongress.api_key)
         if nytcongress.api_key is None:
-            raise NYTCongressApiError('You did not supply an API key')
+            raise NYTCongressApiError('You did not supply an API key')        
         try:
             response = urllib2.urlopen(url).read()
             return json.loads(response)['results']
@@ -149,6 +194,7 @@ class nytcongress(object):
         def floor(id):
             path = 'members/%s/floor_appearances' % id
             results = nytcongress._apicall(path, None)[0]['appearances']
+            return [FloorAppearance(f) for f in results]
         
         @staticmethod
         def bills(id, bill_type):
@@ -164,9 +210,21 @@ class nytcongress(object):
 
         @staticmethod
         def compare(first, second, congress, chamber):
-            path = 'members/%s/compare/%s/%s/%s' % (first, second, congress, chamber)
+            path = 'members/%s/votes/%s/%s/%s' % (first, second, congress, chamber)
             results = nytcongress._apicall(path, None)[0]
             return Comparison(results)
+            
+        @staticmethod
+        def new():
+            path = 'members/new'
+            results = nytcongress._apicall(path, None)[0]
+            return [Member(m) for m in results]
+         
+        @staticmethod
+        def current_member(chamber, state, district=None):
+            path = "members/%s/%s/%s/current" % (chamber, state, district)
+            results = nytcongress._apicall(path, None)
+            return [Member(m) for m in results]
     
     class votes(object):
         @staticmethod
@@ -180,7 +238,38 @@ class nytcongress(object):
             path = '%s/nominations' % congress
             results = nytcongress._apicall(path, None)[0]['votes']
             return [Vote(r) for r in results]
-    
+            
+        @staticmethod
+        def date_range(chamber, start_date, end_date):
+            path = "%s/votes/%s/%s" % (chamber, start_date, end_date)
+            results = nytcongress._apicall(path, None)['votes']
+            return [Vote(r) for r in results]
+
+        @staticmethod
+        def month(chamber, year, month):
+            path = "%s/votes/%s/%s" % (chamber, year, month)
+            results = nytcongress._apicall(path, None)['votes']
+            return [Vote(r) for r in results]
+            
+    class nominees(object):
+        @staticmethod
+        def get(congress, id):
+            path = "%s/nominees/%s" % (congress, id)
+            result = nytcongress._apicall(path, None)[0]
+            return Nominee(result)
+            
+        @staticmethod
+        def filter(congress, type_name):
+            path = "%s/nominees/%s" % (congress, type_name)
+            results = nytcongress._apicall(path, None)[0]
+            return [Nominee(n) for n in results['nominees']]
+        
+        @staticmethod
+        def state(congress, state):
+            path = "%s/nominees/state/%s" % (congress, state)
+            results = nytcongress._apicall(path, None)[0]
+            return [Nominee(n) for n in results['nominees']]
+            
     class committees(object):
         @staticmethod
         def get(congress, chamber, comm):
@@ -208,4 +297,9 @@ class nytcongress(object):
             results = nytcongress._apicall(path, None)[0]
             return [Bill(b) for b in results['bills']]
         
+        @staticmethod
+        def sponsor_compare(first_member, second_member, congress, chamber):
+            path = "members/%s/sponsor_compare/%s/%s/%s" % (first_member, second_member, congress, chamber)
+            results = nytcongress._apicall(path, None)[0]
+            return [Bill(b) for b in results['bills']]
         
